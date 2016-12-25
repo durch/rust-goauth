@@ -5,7 +5,7 @@ authors = ["Drazen Urch <github@drazenur.ch>"]
 description = "Crate for authenticating Server to Server Apps for Google Cloud Engine."
 repository = "https://github.com/durch/rust-goauth"
 readme = "README.md"
-keywords = ["Google Cloud", "Cloud Engine", "Server to Server", "OAuth"]
+keywords = ["Google", "Cloud", "Engine", "Server", "OAuth"]
 license = "MIT"
 documentation = "https://durch.github.io/rust-goauth"
 
