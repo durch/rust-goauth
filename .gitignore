@@ -1,0 +1,12 @@
+target
+Cargo.lock
+/rustbigtable-1ff5eda4d240.json
+/rustbigtable-f2bc07eb553d.pem
+/libbigtable.rlib
+.gitignore
+.idea/
+docker-compose.yml
+key.pem
+libbigtable.rlib
+/pk.pem
+pk.pem

@@ -1,0 +1,17 @@
+[package]
+name = "goauth"
+version = "0.1.0"
+authors = ["Drazen Urch <github@drazenur.ch>"]
+
+[lib]
+name = "goauth"
+path = "src/lib.rs"
+
+[dependencies]
+serde = "0.8"
+serde_derive = "0.8"
+serde_json = "0.8"
+time = "0.1.35"
+curl = "0.4"
+log = "0.3.6"
+smpl_jwt = "0.1"
