@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/durch/rust-goauth.svg?branch=master)](https://travis-ci.org/durch/rust-goauth)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/durch/rust-goauth/blob/master/LICENSE)
-[![](http://meritbadge.herokuapp.com/rust-goauth)](https://crates.io/crates/rust-goauth)
+[![](http://meritbadge.herokuapp.com/goauth)](https://crates.io/crates/goauth)
 [![Join the chat at https://gitter.im/durch/rust-goauth](https://badges.gitter.im/durch/rust-goauth.svg)](https://gitter.im/durch/rust-goauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## rust-goauth [[docs](https://durch.github.io/rust-goauth)]
