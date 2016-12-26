@@ -11,7 +11,7 @@ extern crate curl;
 extern crate log;
 extern crate smpl_jwt;
 
-mod error;
+pub mod error;
 pub mod auth;
 pub mod scopes;
 
