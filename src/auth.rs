@@ -24,7 +24,7 @@ impl JwtClaims {
          expires_after: Option<i64>) -> Self {
     let iat = match valid_from {
       Some(x) => x,
-      None => time::now().to_timespec().sec
+      None => time::now_utc().to_timespec().sec
     };
     let exp = match expires_after {
       Some(x) => iat + x,
@@ -82,6 +82,14 @@ impl fmt::Display for Token {
 }
 
 impl Token {
+  pub fn access_token(&self) -> &str {
+      &self.access_token
+  }
+
+    pub fn token_type(&self) -> &str {
+      &self.token_type
+    }
+
   pub fn from_str(response: &str) -> Result<Token, GOErr> {
     match serde_json::from_str(response) {
       Ok(x) => Ok(x),
