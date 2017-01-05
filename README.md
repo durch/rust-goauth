@@ -41,4 +41,5 @@ fn main() {
     Ok(x) => debug!("{}", x),
     Err(e) => debug!("{}", e)
   };
-}```
+}
+```
