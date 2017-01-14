@@ -11,8 +11,7 @@ Provides a serialisable [Token](https://durch.github.io/rust-goauth/goauth/auth/
 
 ### Usage
 
-```
-
+```rust
 extern crate smpl_jwt;
 extern crate goauth;
 #[macro_use]
