@@ -1,6 +1,6 @@
 [package]
 name = "goauth"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Drazen Urch <github@drazenur.ch>"]
 description = "Crate for authenticating Server to Server Apps for Google Cloud Engine."
 repository = "https://github.com/durch/rust-goauth"

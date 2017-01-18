@@ -1,4 +1,3 @@
-#![feature(proc_macro)]
 #![allow(dead_code)]
 
 extern crate serde;
