@@ -8,13 +8,15 @@ addons:
     - libdw-dev
     - binutils-dev
 rust:
+- stable
+- beta
 - nightly
 before_script:
 - |
   pip install 'travis-cargo<0.2' --user &&
   export PATH=$HOME/.local/bin:$PATH
 script:
-- "travis-cargo doc"
+- "travis-cargo build &&\n travis-cargo --only stable doc"
 after_success:
 - travis-cargo doc-upload
 - travis-cargo coveralls --no-sudo --verify
