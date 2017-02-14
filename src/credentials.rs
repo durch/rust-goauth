@@ -28,6 +28,10 @@ impl Credentials {
         Ok(serde_json::from_slice(&buffer.as_slice())?)
     }
 
+    pub fn from_str(s: &str) -> Result<Self, GOErr> {
+        Ok(serde_json::from_str(s)?)
+    }
+
     pub fn rsa_key(&self) -> Result<RSAKey, GOErr> {
         Ok(RSAKey::from_str(&self.private_key)?)
     }
