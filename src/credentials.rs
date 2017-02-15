@@ -40,6 +40,10 @@ impl Credentials {
         self.client_email.clone()
     }
 
+    pub fn project<'a>(&self) -> String {
+        self.project_id.clone()
+    }
+
     pub fn token_uri<'a>(&self) -> String {
         self.token_uri.clone()
     }
