@@ -4,7 +4,6 @@ use std::fs::File;
 use error::GOErr;
 use smpl_jwt::RSAKey;
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Credentials {
     #[serde(rename = "type")]
