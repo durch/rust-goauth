@@ -65,7 +65,7 @@ fn form_body(body: String) -> String {
 ///
 /// ```
 pub fn get_token_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Result<Token, GOErr> {
-    let mut token: Result<Token, GOErr>;
+    let mut token: Result<Token, GOErr> = Err(GOErr::Unknown);
     let request_body = form_body(jwt.finalize()?);
     let mut data = request_body.as_bytes();
 
