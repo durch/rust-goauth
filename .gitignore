@@ -10,3 +10,5 @@ key.pem
 libbigtable.rlib
 /pk.pem
 pk.pem
+!/src/auth.rs
+!/.gitignore

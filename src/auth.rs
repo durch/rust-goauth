@@ -7,7 +7,7 @@ use std::error::Error;
 use error::GOErr;
 use scopes::Scope;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct JwtClaims {
   iss: String,
   scope: String,
@@ -68,7 +68,7 @@ impl Error for TokenErr {
   }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Token {
   access_token: String,
   token_type: String,
