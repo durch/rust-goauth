@@ -4,6 +4,8 @@ use std::fs::File;
 use error::GOErr;
 use smpl_jwt::RSAKey;
 
+use std::str::FromStr;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Credentials {
     #[serde(rename = "type")]
@@ -24,26 +26,29 @@ impl Credentials {
         let mut f = File::open(fp)?;
         let mut buffer = Vec::new();
         f.read_to_end(&mut buffer)?;
-        Ok(serde_json::from_slice(&buffer.as_slice())?)
-    }
-
-    pub fn from_str(s: &str) -> Result<Self, GOErr> {
-        Ok(serde_json::from_str(s)?)
+        Ok(serde_json::from_slice(buffer.as_slice())?)
     }
 
     pub fn rsa_key(&self) -> Result<RSAKey, GOErr> {
         Ok(RSAKey::from_str(&self.private_key)?)
     }
 
-    pub fn iss<'a>(&self) -> String {
+    pub fn iss(&self) -> String {
         self.client_email.clone()
     }
 
-    pub fn project<'a>(&self) -> String {
+    pub fn project(&self) -> String {
         self.project_id.clone()
     }
 
-    pub fn token_uri<'a>(&self) -> String {
+    pub fn token_uri(&self) -> String {
         self.token_uri.clone()
+    }
+}
+
+impl FromStr for Credentials {
+    type Err = GOErr;
+    fn from_str(s: &str) -> Result<Self, GOErr> {
+        Ok(serde_json::from_str(s)?)
     }
 }

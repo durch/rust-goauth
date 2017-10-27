@@ -19,13 +19,14 @@ use error::GOErr;
 use auth::{Token, JwtClaims};
 use credentials::Credentials;
 
+use std::str::FromStr;
 use std::io::Read;
 use smpl_jwt::Jwt;
 use curl::easy::{Easy, List};
 
 const DEFAULT_URL: &'static str = "https://www.googleapis.com/oauth2/v4/token";
 
-fn form_body(body: String) -> String {
+fn form_body(body: &str) -> String {
     format!("grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion={}", body)
 }
 
@@ -66,7 +67,7 @@ fn form_body(body: String) -> String {
 /// ```
 pub fn get_token_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Result<Token, GOErr> {
     let mut token: Result<Token, GOErr> = Err(GOErr::Unknown);
-    let request_body = form_body(jwt.finalize()?);
+    let request_body = form_body(&jwt.finalize()?);
     let mut data = request_body.as_bytes();
 
     let mut easy = Easy::new();
@@ -185,7 +186,7 @@ fn get_token_test() {
 /// ```
 pub fn get_token_with_creds(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token, GOErr> {
     let mut token: Result<Token, GOErr> = Err(GOErr::Unknown);
-    let request_body = form_body(jwt.finalize()?);
+    let request_body = form_body(&jwt.finalize()?);
     let mut data = request_body.as_bytes();
 
     let mut easy = Easy::new();
