@@ -6,7 +6,6 @@ extern crate serde_json;
 extern crate serde_derive;
 extern crate time;
 extern crate curl;
-#[macro_use]
 extern crate log;
 extern crate smpl_jwt;
 
@@ -24,7 +23,7 @@ use std::io::Read;
 use smpl_jwt::Jwt;
 use curl::easy::{Easy, List};
 
-const DEFAULT_URL: &'static str = "https://www.googleapis.com/oauth2/v4/token";
+const DEFAULT_URL: &str = "https://www.googleapis.com/oauth2/v4/token";
 
 fn form_body(body: &str) -> String {
     format!("grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion={}", body)

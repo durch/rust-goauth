@@ -19,7 +19,7 @@ pub struct JwtClaims {
 
 impl JwtClaims {
     pub fn new(service_acc_id: String,
-               scope: Scope,
+               scope: &Scope,
                aud_url: String,
                valid_from: Option<i64>,
                expires_after: Option<i64>) -> Self {
@@ -35,8 +35,8 @@ impl JwtClaims {
             iss: service_acc_id,
             scope: scope.url(),
             aud: aud_url,
-            exp: exp,
-            iat: iat
+            exp,
+            iat
         }
     }
 }
