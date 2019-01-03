@@ -106,6 +106,7 @@ pub enum Scope {
   DriveScripts,
   Firebase,
   FirebaseReadOnly,
+  FirebaseCloudMessaging,
   FitnessActivityRead,
   FitnessActivityWrite,
   FitnessBodyRead,
@@ -411,6 +412,8 @@ impl Scope {
         => String::from("https://www.googleapis.com/auth/firebase"),
       Scope::FirebaseReadOnly
         => String::from("https://www.googleapis.com/auth/firebase.readonly"),
+      Scope::FirebaseCloudMessaging
+      => String::from("https://www.googleapis.com/auth/firebase.messaging"),
       Scope::FitnessActivityRead
         => String::from("https://www.googleapis.com/auth/fitness.activity.read"),
       Scope::FitnessActivityWrite
