@@ -5,10 +5,10 @@ extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
 extern crate time;
-//extern crate curl;
 extern crate log;
 extern crate smpl_jwt;
 extern crate reqwest;
+extern crate futures;
 
 pub mod error;
 pub mod auth;
@@ -20,16 +20,15 @@ use auth::{Token, JwtClaims};
 use credentials::Credentials;
 
 use std::str::FromStr;
-//use std::io::Read;
 use smpl_jwt::Jwt;
-//use curl::easy::{Easy, List};
 use reqwest::Client;
+use reqwest::async::Client as aClient;
+use futures::future::Future;
 
 const DEFAULT_URL: &str = "https://www.googleapis.com/oauth2/v4/token";
 
 fn form_body(body: &str) -> Vec<(&str, &str)> {
     vec!(("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"), ("assertion", body))
-//    format!("grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion={}", body)
 }
 
 /// Get Token which can be used to authenticate further request
@@ -75,31 +74,6 @@ pub fn get_token_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Result<Token
         .form(&request_body).send()?;
 
     Token::from_str(&response.text()?)
-
-
-//    let mut data = request_body.as_bytes();
-//
-//    let mut easy = Easy::new();
-//    easy.url(url.unwrap_or(DEFAULT_URL))?;
-//
-//    easy.post(true)?;
-//    easy.post_field_size(data.len() as u64)?;
-//
-//    let mut list = List::new();
-//    list.append("Content-Type: application/x-www-form-urlencoded")?;
-//
-//    {
-//        let mut transfer = easy.transfer();
-//        transfer.read_function(|buf| {
-//            Ok(data.read(buf).unwrap_or(0))
-//        })?;
-//        transfer.write_function(|data| {
-//            let response_data = std::str::from_utf8(data).expect("No response");
-//            token = Token::from_str(response_data);
-//            Ok(data.len())
-//        })?;
-//        transfer.perform()?;
-//    }
 }
 
 pub fn get_token_as_string_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Result<String, GOErr> {
@@ -139,6 +113,7 @@ fn get_token_test() {
     use auth::JwtClaims;
     use smpl_jwt::{RSAKey, Jwt};
     use scopes::Scope;
+
 
     let token_url = "https://www.googleapis.com/oauth2/v4/token";
     let iss = "some_iss"; // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
@@ -193,38 +168,68 @@ fn get_token_test() {
 ///
 /// ```
 pub fn get_token_with_creds(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token, GOErr> {
-//    let mut token: Result<Token, GOErr> = Err(GOErr::Unknown);
     let final_jwt = jwt.finalize()?;
     let request_body = form_body(&final_jwt);
-//    let mut data = request_body.as_bytes();
-
-//    let mut easy = Easy::new();
-//    easy.url(&credentials.token_uri())?;
 
     let client = Client::new();
-//    let request_body = form_body(&jwt.finalize()?);
     let mut response = client.post(&credentials.token_uri())
         .form(&request_body).send()?;
 
     Token::from_str(&response.text()?)
-
-//    easy.post(true)?;
-//    easy.post_field_size(data.len() as u64)?;
-//
-//    let mut list = List::new();
-//    list.append("Content-Type: application/x-www-form-urlencoded")?;
-//
-//    {
-//        let mut transfer = easy.transfer();
-//        transfer.read_function(|buf| {
-//            Ok(data.read(buf).unwrap_or(0))
-//        })?;
-//        transfer.write_function(|data| {
-//            let response_data = std::str::from_utf8(data).expect("No response");
-//            token = Token::from_str(response_data);
-//            Ok(data.len())
-//        })?;
-//        transfer.perform()?;
-//    }
-//    token
 }
+
+
+/// Async get Token which can be used to authenticate further request
+/// ### Example
+///
+/// ```
+/// extern crate smpl_jwt;
+/// extern crate goauth;
+/// #[macro_use]
+/// extern crate log;
+/// extern crate futures;
+///
+/// use goauth::auth::JwtClaims;
+/// use goauth::scopes::Scope;
+/// use goauth::credentials::Credentials;
+/// use goauth::error::GOErr;
+/// use goauth::get_token_with_creds_async;
+/// use smpl_jwt::Jwt;
+/// use futures::future::Future;
+///
+///
+/// fn main() -> Result<(), GOErr> {
+///
+///   let credentials = Credentials::from_file("dummy_credentials_file_for_tests.json").unwrap();
+///
+///   let claims = JwtClaims::new(credentials.iss(),
+///                              &Scope::DevStorageReadWrite,
+///                              credentials.token_uri(),
+///                              None, None);
+///
+///   let jwt = Jwt::new(claims, credentials.rsa_key().unwrap(), None);
+///   match get_token_with_creds_async(&jwt, &credentials).wait() {
+///     Ok(x) => debug!("{}", x?),
+///     Err(_) => error!("An error occured, somewhere in there, tyr debugging with `get_token_with_creds`")
+///   };
+///   Ok(())
+/// }
+///
+/// ```
+pub fn get_token_with_creds_async(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> impl Future<Item=Result<Token, GOErr>> {
+    let final_jwt = match jwt.finalize() {
+        Ok(x) => x,
+        Err(e) => panic!(e)
+    };
+    let request_body = form_body(&final_jwt);
+
+    let client = aClient::new();
+    client.post(&credentials.token_uri())
+        .form(&request_body)
+        .send()
+        .and_then(|mut res| {
+            println!("{}", res.status());
+            res.json::<Token>()
+        }).map(Ok)
+}
+

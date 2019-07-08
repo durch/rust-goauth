@@ -90,7 +90,6 @@ impl Token {
     pub fn token_type(&self) -> &str {
         &self.token_type
     }
-
 }
 
 impl FromStr for Token {
