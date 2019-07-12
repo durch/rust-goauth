@@ -1,7 +1,6 @@
 use std;
 use serde_json::Error as json_error;
 use std::io::Error as io_error;
-//use curl::Error as curl_error;
 use smpl_jwt::error::JwtErr as jwt_error;
 use reqwest::Error as reqwest_error;
 use auth::TokenErr as token_error;
@@ -29,7 +28,6 @@ pub enum GOErr {
 
 impl_from!(json_error, Json);
 impl_from!(io_error, Io);
-//impl_from!(curl_error, Curl);
 impl_from!(reqwest_error, Re);
 impl_from!(jwt_error, JWT);
 impl_from!(token_error, TokenErr);
