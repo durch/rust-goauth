@@ -6,7 +6,7 @@ use smpl_jwt::RSAKey;
 
 use std::str::FromStr;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Credentials {
     #[serde(rename = "type")]
     t: String,
