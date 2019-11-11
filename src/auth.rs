@@ -90,6 +90,10 @@ impl Token {
     pub fn token_type(&self) -> &str {
         &self.token_type
     }
+    
+    pub fn expires_in(&self) -> u32 {
+        self.expires_in
+    }
 }
 
 impl FromStr for Token {
