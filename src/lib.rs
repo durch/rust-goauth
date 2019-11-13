@@ -210,7 +210,7 @@ pub fn get_token_with_creds(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> 
 ///   let jwt = Jwt::new(claims, credentials.rsa_key().unwrap(), None);
 ///   match get_token_with_creds_async(&jwt, &credentials).wait() {
 ///     Ok(x) => debug!("{}", x?),
-///     Err(_) => error!("An error occured, somewhere in there, tyr debugging with `get_token_with_creds`")
+///     Err(_) => error!("An error occurred, somewhere in there, tyr debugging with `get_token_with_creds`")
 ///   };
 ///   Ok(())
 /// }

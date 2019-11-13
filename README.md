@@ -5,7 +5,7 @@
 
 ## rust-goauth [[docs](https://durch.github.io/rust-goauth)]
 
-Crate for using [OAuth 2.0 with Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) for Google Cloud Engine, with tentative support for all supported [Scopes](https://durch.github.io/rust-goauth/goauth/scopes/enum.Scope.html).
+Crate for using [OAuth 2.0 with Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) for Google Cloud Engine, with tentative support for all supported [Scopes](https://durch.github.io/rust-goauth/goauth/scopes/enum.Scope.html). Supports sync or async requests via Futures.
 
 Provides a serialisable [Token](https://durch.github.io/rust-goauth/goauth/auth/struct.Token.html) struct for use in other applications that require authenticated interactions with Google Cloud.
 

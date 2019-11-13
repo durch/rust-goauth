@@ -64,7 +64,7 @@ impl Error for TokenErr {
         &self.error_description
     }
 
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         None
     }
 }

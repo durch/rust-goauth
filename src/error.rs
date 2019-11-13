@@ -41,7 +41,7 @@ impl std::fmt::Display for GOErr {
             GOErr::JWT(ref e) => e.fmt(f),
             GOErr::TokenErr(ref e) => e.fmt(f),
             GOErr::Re(ref e) => e.fmt(f),
-            GOErr::Unknown => write!(f, "An unknown error has occured"),
+            GOErr::Unknown => write!(f, "An unknown error has occurred"),
         }
     }
 }
@@ -51,7 +51,6 @@ impl std::error::Error for GOErr {
         match *self {
             GOErr::Json(ref e) => e.description(),
             GOErr::Io(ref e) => e.description(),
-//            GOErr::Curl(ref e) => e.description(),
             GOErr::JWT(ref e) => e.description(),
             GOErr::TokenErr(ref e) => e.description(),
             GOErr::Re(ref e) => e.description(),
