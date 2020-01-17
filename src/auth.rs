@@ -47,7 +47,7 @@ impl fmt::Display for JwtClaims {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TokenErr {
     error: String,
     error_description: String

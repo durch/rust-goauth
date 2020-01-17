@@ -2,6 +2,7 @@
 
 #![allow(dead_code)]
 
+#[derive(Clone, Debug)]
 pub enum Scope {
     Activity,
     AdexchangeBuyer,
