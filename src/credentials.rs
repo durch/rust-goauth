@@ -1,7 +1,6 @@
-use serde_json;
 use std::io::prelude::*;
 use std::fs::File;
-use error::GOErr;
+use crate::{Result, GoErr};
 use smpl_jwt::RSAKey;
 
 use std::str::FromStr;
@@ -22,14 +21,14 @@ pub struct Credentials {
 }
 
 impl Credentials {
-    pub fn from_file(fp: &str) -> Result<Self, GOErr> {
+    pub fn from_file(fp: &str) -> Result<Self> {
         let mut f = File::open(fp)?;
         let mut buffer = Vec::new();
         f.read_to_end(&mut buffer)?;
         Ok(serde_json::from_slice(buffer.as_slice())?)
     }
 
-    pub fn rsa_key(&self) -> Result<RSAKey, GOErr> {
+    pub fn rsa_key(&self) -> Result<RSAKey> {
         Ok(RSAKey::from_str(&self.private_key)?)
     }
 
@@ -47,8 +46,8 @@ impl Credentials {
 }
 
 impl FromStr for Credentials {
-    type Err = GOErr;
-    fn from_str(s: &str) -> Result<Self, GOErr> {
+    type Err = GoErr;
+    fn from_str(s: &str) -> Result<Self, GoErr> {
         Ok(serde_json::from_str(s)?)
     }
 }

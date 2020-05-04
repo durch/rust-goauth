@@ -11,34 +11,39 @@ Provides a serialisable [Token](https://durch.github.io/rust-goauth/goauth/auth/
 
 ### Usage
 
-```rust
-extern crate smpl_jwt;
-extern crate goauth;
+```rust,no_run
 #[macro_use]
 extern crate log;
 
 use goauth::auth::JwtClaims;
 use goauth::scopes::Scope;
-use goauth::get_token;
+use goauth::{get_token, get_token_blocking, GoErr};
+use goauth::credentials::Credentials;
 use smpl_jwt::{RSAKey, Jwt};
 
-fn main() {
+fn main() -> Result<(), GoErr>{
   let token_url = "https://www.googleapis.com/oauth2/v4/token";
-  let iss = "some_iss"; // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
-  let private_key_file = "random_rsa_for_testing";
+  let iss = "<some-iss>"; // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
 
+  let credentials = Credentials::from_file("dummy_credentials_file_for_tests.json").unwrap();
   let claims = JwtClaims::new(String::from(iss),
-                             Scope::DevStorageReadWrite,
+                             &Scope::DevStorageReadWrite,
                              String::from(token_url),
                              None, None);
-  let key = match RSAKey::from_pem(private_key_file) {
-    Ok(x) => x,
-    Err(e) => panic!("{}", e)
+  let jwt = Jwt::new(claims, credentials.rsa_key().unwrap(), None);
+
+  // Use async
+  let token = async {
+    match get_token(&jwt, &credentials).await {
+      Ok(token) => token,
+      Err(e) => panic!(e)
+    }
   };
-  let jwt = Jwt::new(claims, key, None);
-  match get_token(&jwt, None) {
-    Ok(x) => debug!("{}", x),
-    Err(e) => debug!("{}", e)
-  };
+
+  // Or sync
+  let token = get_token_blocking(&jwt, &credentials)?;
+
+  Ok(())
+  
 }
 ```
