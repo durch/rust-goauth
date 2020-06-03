@@ -100,60 +100,6 @@ pub fn get_token_as_string(
     )?)?)
 }
 
-#[test]
-fn test_jwt_encode() {
-    use auth::JwtClaims;
-    use scopes::Scope;
-    use smpl_jwt::{Jwt, RSAKey};
-
-    let token_url = "https://www.googleapis.com/oauth2/v4/token";
-    let iss = "some_iss"; // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
-    let private_key_file = "random_rsa_for_testing";
-
-    let claims = JwtClaims::new(
-        String::from(iss),
-        &Scope::DevStorageReadWrite,
-        String::from(token_url),
-        Some(1482317385),
-        Some(3600),
-    );
-    let key = match RSAKey::from_pem(private_key_file) {
-        Ok(x) => x,
-        Err(e) => panic!("{}", e),
-    };
-    let jwt = Jwt::new(claims, key, None);
-    assert_eq!(jwt.finalize().unwrap(), "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzb21lX2lzcyIsInNjb3BlIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfd3JpdGUiLCJhdWQiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjQvdG9rZW4iLCJleHAiOjE0ODIzMjA5ODUsImlhdCI6MTQ4MjMxNzM4NX0=.BldQozpzNYnLnYWBbqwAWY1j2hPDD3oVY9EOG0eRJN77sC4ZInEyGJT5eXLD39C726TdrEVCHmvhKBJFmaFL2BXNto69_v8lz-3oGnFL5FkUr4RRpukd_6tj7-RZzx15LIzdTqzKfAUlqWoZUdze8Fcd1NJ6w1g49CCghvN_eryvecALpjnHoBkKlIXnSm_udiSf26cYWvCikmW5g8nUqAduFsIYfR-4LMwyUfYH1hNC64SRsfLH9bL4-tyeaoUCv5MXTIhxrJbrhQy3TEOSc5didDrMoYNUu_qjJvxBQbq1Um1W1SpyvSd4eVJn18xZcOmCnoE73RDZcxT5hDpaRQ==");
-}
-
-#[test]
-fn get_token_test() {
-    //  This test will always pass, output is logged via debug macro
-    use auth::JwtClaims;
-    use scopes::Scope;
-    use smpl_jwt::{Jwt, RSAKey};
-
-    let token_url = "https://www.googleapis.com/oauth2/v4/token";
-    let iss = "some_iss"; // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
-    let private_key_file = "random_rsa_for_testing";
-
-    let claims = JwtClaims::new(
-        String::from(iss),
-        &Scope::DevStorageReadWrite,
-        String::from(token_url),
-        None,
-        None,
-    );
-    let key = match RSAKey::from_pem(private_key_file) {
-        Ok(x) => x,
-        Err(e) => panic!("{}", e),
-    };
-    let jwt = Jwt::new(claims, key, None);
-    match get_token_legacy(&jwt, None) {
-        Ok(x) => println!("{}", x),
-        Err(e) => println!("{}", e),
-    };
-}
-
 /// Get Token which can be used to authenticate further request
 /// ### Example
 ///
@@ -248,4 +194,63 @@ pub async fn get_token(
     
     let token = response.json::<Token>().await?;
     Ok(token)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_jwt_encode() {
+        use auth::JwtClaims;
+        use scopes::Scope;
+        use smpl_jwt::{Jwt, RSAKey};
+
+        let token_url = "https://www.googleapis.com/oauth2/v4/token";
+        let iss = "some_iss"; // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
+        let private_key_file = "random_rsa_for_testing";
+
+        let claims = JwtClaims::new(
+            String::from(iss),
+            &Scope::DevStorageReadWrite,
+            String::from(token_url),
+            Some(1482317385),
+            Some(3600),
+        );
+        let key = match RSAKey::from_pem(private_key_file) {
+            Ok(x) => x,
+            Err(e) => panic!("{}", e),
+        };
+        let jwt = Jwt::new(claims, key, None);
+        assert_eq!(jwt.finalize().unwrap(), "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzb21lX2lzcyIsInNjb3BlIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfd3JpdGUiLCJhdWQiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjQvdG9rZW4iLCJleHAiOjE0ODIzMjA5ODUsImlhdCI6MTQ4MjMxNzM4NX0=.BldQozpzNYnLnYWBbqwAWY1j2hPDD3oVY9EOG0eRJN77sC4ZInEyGJT5eXLD39C726TdrEVCHmvhKBJFmaFL2BXNto69_v8lz-3oGnFL5FkUr4RRpukd_6tj7-RZzx15LIzdTqzKfAUlqWoZUdze8Fcd1NJ6w1g49CCghvN_eryvecALpjnHoBkKlIXnSm_udiSf26cYWvCikmW5g8nUqAduFsIYfR-4LMwyUfYH1hNC64SRsfLH9bL4-tyeaoUCv5MXTIhxrJbrhQy3TEOSc5didDrMoYNUu_qjJvxBQbq1Um1W1SpyvSd4eVJn18xZcOmCnoE73RDZcxT5hDpaRQ==");
+    }
+
+    #[test]
+    fn get_token_test() {
+        //  This test will always pass, output is logged via debug macro
+        use auth::JwtClaims;
+        use scopes::Scope;
+        use smpl_jwt::{Jwt, RSAKey};
+
+        let token_url = "https://www.googleapis.com/oauth2/v4/token";
+        let iss = "some_iss"; // https://developers.google.com/identity/protocols/OAuth2ServiceAccount
+        let private_key_file = "random_rsa_for_testing";
+
+        let claims = JwtClaims::new(
+            String::from(iss),
+            &Scope::DevStorageReadWrite,
+            String::from(token_url),
+            None,
+            None,
+        );
+        let key = match RSAKey::from_pem(private_key_file) {
+            Ok(x) => x,
+            Err(e) => panic!("{}", e),
+        };
+        let jwt = Jwt::new(claims, key, None);
+        match get_token_legacy(&jwt, None) {
+            Ok(x) => println!("{}", x),
+            Err(e) => println!("{}", e),
+        };
+    }
 }
