@@ -25,4 +25,6 @@ reqwest = {version = "0.10.4", features = ["blocking", "json"]}
 futures = "0.3.4"
 simpl = "0.1.0"
 tokio = "^0.2"
+
+[dev-dependencies]
 doc-comment = "0.3.3"

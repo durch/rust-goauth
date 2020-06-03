@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate serde_derive;
+
+#[cfg(test)]
 #[macro_use]
 extern crate doc_comment;
 
@@ -17,8 +19,6 @@ use std::str::FromStr;
 use tokio::runtime::Runtime;
 
 const DEFAULT_URL: &str = "https://www.googleapis.com/oauth2/v4/token";
-
-doctest!("../README.md");
 
 fn form_body(body: &str) -> Vec<(&str, &str)> {
     vec![
@@ -199,6 +199,8 @@ pub async fn get_token(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    doctest!("../README.md");
 
     #[test]
     fn test_jwt_encode() {
