@@ -57,6 +57,8 @@ pub enum Scope {
     AppsOrder,
     AppsOrderReadOnly,
     AppState,
+    BigTableData,
+    BigTableDataReadOnly,
     BigQuery,
     BigQueryInsertdata,
     Blogger,
@@ -313,6 +315,10 @@ impl Scope {
             => String::from("https://www.googleapis.com/auth/apps.order.readonly"),
             Scope::AppState
             => String::from("https://www.googleapis.com/auth/appstate"),
+            Scope::BigTableData
+            => String::from("https://www.googleapis.com/auth/bigtable.data"),
+            Scope::BigTableDataReadOnly
+            => String::from("https://www.googleapis.com/auth/bigtable.data.readonly"),
             Scope::BigQuery
             => String::from("https://www.googleapis.com/auth/bigquery"),
             Scope::BigQueryInsertdata
