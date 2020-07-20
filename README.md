@@ -3,7 +3,7 @@
 [![](http://meritbadge.herokuapp.com/goauth)](https://crates.io/crates/goauth)
 [![Join the chat at https://gitter.im/durch/rust-goauth](https://badges.gitter.im/durch/rust-goauth.svg)](https://gitter.im/durch/rust-goauth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## rust-goauth [[docs](https://durch.github.io/rust-goauth)]
+## rust-goauth [[docs](https://docs.rs/goauth)]
 
 Crate for using [OAuth 2.0 with Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) for Google Cloud Engine, with tentative support for all supported [Scopes](https://durch.github.io/rust-goauth/goauth/scopes/enum.Scope.html). Supports sync or async requests via Futures.
 
