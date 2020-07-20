@@ -1,0 +1,1 @@
+initSidebarItems({"macro":[["err","Example ``` use std::fs; use simpl::err;"]]});

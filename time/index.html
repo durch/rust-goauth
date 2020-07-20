@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `time` crate."><meta name="keywords" content="rust, rustlang, rust-lang, time"><title>time - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="https://avatars0.githubusercontent.com/u/55999857"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../time/index.html'><div class='logo-container'><img src='https://avatars0.githubusercontent.com/u/55999857' alt='logo'></div></a><p class='location'>Crate time</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all time's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'time', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/time/lib.rs.html#1-624' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>time</a></span></h1><div class='docblock'><p>Simple time handling.</p>
+<p><img src="https://img.shields.io/badge/rustc-1.32.0-blue" alt="rustc 1.32.0" /></p>
+<h1 id="feature-flags-in-cargo" class="section-header"><a href="#feature-flags-in-cargo">Feature flags in Cargo</a></h1><h2 id="std" class="section-header"><a href="#std"><code>std</code></a></h2>
+<p>Currently, all structs except <code>Instant</code> can be used with <code>#![no_std]</code>. As
+support for the standard library is enabled by default, you must use
+<code>default_features = false</code> in your <code>Cargo.toml</code> to enable this.</p>
+<pre><code class="language-toml">[dependencies]
+time = { version = &quot;0.2&quot;, default-features = false }
+</code></pre>
+<p>Of the structs that are usable, some methods may only be enabled due a
+reliance on <code>Instant</code>. These will be indicated in the documentation.</p>
+<h2 id="serde" class="section-header"><a href="#serde"><code>serde</code></a></h2>
+<p><a href="https://github.com/serde-rs/serde">Serde</a> support is behind a feature flag.
+To enable it, use the <code>serde</code> feature. This is not enabled by default. It
+<em>is</em> compatible with <code>#![no_std]</code>, so long as an allocator is present.</p>
+<p>With the standard library:</p>
+<pre><code class="language-toml">[dependencies]
+time = { version = &quot;0.2&quot;, features = [&quot;serde&quot;] }
+</code></pre>
+<p>With <code>#![no_std]</code> support:</p>
+<pre><code class="language-toml">[dependencies]
+time = { version = &quot;0.2&quot;, default-features = false, features = [&quot;serde&quot;] }
+</code></pre>
+<h2 id="rand" class="section-header"><a href="#rand"><code>rand</code></a></h2>
+<p><a href="https://github.com/rust-random/rand">Rand</a> support is behind a feature
+flag. To enable it, use the <code>rand</code> feature. This is not enabled by default.
+Usage is compatible with <code>#![no_std]</code>.</p>
+<p>With the standard library:</p>
+<pre><code class="language-toml">[dependencies]
+time = { version = &quot;0.2&quot;, features = [&quot;rand&quot;] }
+</code></pre>
+<p>With <code>#![no_std]</code> support:</p>
+<pre><code class="language-toml">[dependencies]
+time = { version = &quot;0.2&quot;, default-features = false, features = [&quot;rand&quot;] }
+</code></pre>
+<h2 id="deprecated" class="section-header"><a href="#deprecated"><code>deprecated</code></a></h2>
+<p>Using the <code>deprecated</code> feature allows using deprecated v0.1 methods. Enabled
+by default.</p>
+<p>With the standard library, the normal <code>time = 0.2</code> will work as expected.</p>
+<p>With <code>#![no_std]</code> support:</p>
+<pre><code class="language-toml">[dependencies]
+time = { version = &quot;0.2&quot;, default-features = false, features = [&quot;deprecated&quot;] }
+</code></pre>
+<h2 id="panicking-api" class="section-header"><a href="#panicking-api"><code>panicking-api</code></a></h2>
+<p>Non-panicking APIs are provided, and should generally be preferred. However,
+there are some situations where avoiding <code>.unwrap()</code> may be desired. To
+enable these APIs, you need to use the <code>panicking-api</code> feature in your
+<code>Cargo.toml</code>, which is not enabled by default.</p>
+<p>Library authors should avoid using this feature.</p>
+<p>This feature will be removed in a future release, as there are provided
+macros to perform the equivalent calculations at compile-time.</p>
+<pre><code class="language-toml">[dependencies]
+time = { version = &quot;0.2&quot;, features = [&quot;panicking-api&quot;] }
+</code></pre>
+<h1 id="formatting" class="section-header"><a href="#formatting">Formatting</a></h1>
+<p>Time's formatting behavior is based on <code>strftime</code> in C, though it is
+explicitly <em>not</em> compatible. Specifiers may be missing, added, or have
+different behavior than in C. As such, you should use the table below, which
+is an up-to-date reference on what each specifier does.</p>
+<table><thead><tr><th>Specifier</th><th>Replaced by</th><th>Example</th></tr></thead><tbody>
+<tr><td><code>%a</code></td><td>Abbreviated weekday name</td><td><code>Thu</code></td></tr>
+<tr><td><code>%A</code></td><td>Full weekday name</td><td><code>Thursday</code></td></tr>
+<tr><td><code>%b</code></td><td>Abbreviated month name</td><td><code>Aug</code></td></tr>
+<tr><td><code>%B</code></td><td>Full month name</td><td><code>August</code></td></tr>
+<tr><td><code>%c</code></td><td>Date and time representation, equivalent to <code>%a %b %-d %-H:%M:%S %-Y</code></td><td><code>Thu Aug 23 14:55:02 2001</code></td></tr>
+<tr><td><code>%C</code></td><td>Year divided by 100 and truncated to integer (<code>00</code>-<code>99</code>)</td><td><code>20</code></td></tr>
+<tr><td><code>%d</code></td><td>Day of the month, zero-padded (<code>01</code>-<code>31</code>)</td><td><code>23</code></td></tr>
+<tr><td><code>%D</code></td><td>Short MM/DD/YY date, equivalent to <code>%-m/%d/%y</code></td><td><code>8/23/01</code></td></tr>
+<tr><td><code>%F</code></td><td>Short YYYY-MM-DD date, equivalent to <code>%-Y-%m-%d</code></td><td><code>2001-08-23</code></td></tr>
+<tr><td><code>%g</code></td><td>Week-based year, last two digits (<code>00</code>-<code>99</code>)</td><td><code>01</code></td></tr>
+<tr><td><code>%G</code></td><td>Week-based year</td><td><code>2001</code></td></tr>
+<tr><td><code>%H</code></td><td>Hour in 24h format (<code>00</code>-<code>23</code>)</td><td><code>14</code></td></tr>
+<tr><td><code>%I</code></td><td>Hour in 12h format (<code>01</code>-<code>12</code>)</td><td><code>02</code></td></tr>
+<tr><td><code>%j</code></td><td>Day of the year (<code>001</code>-<code>366</code>)</td><td><code>235</code></td></tr>
+<tr><td><code>%m</code></td><td>Month as a decimal number (<code>01</code>-<code>12</code>)</td><td><code>08</code></td></tr>
+<tr><td><code>%M</code></td><td>Minute (<code>00</code>-<code>59</code>)</td><td><code>55</code></td></tr>
+<tr><td><code>%N</code></td><td>Subsecond nanoseconds. Always 9 digits</td><td><code>012345678</code></td></tr>
+<tr><td><code>%p</code></td><td><code>am</code> or <code>pm</code> designation</td><td><code>pm</code></td></tr>
+<tr><td><code>%P</code></td><td><code>AM</code> or <code>PM</code> designation</td><td><code>PM</code></td></tr>
+<tr><td><code>%r</code></td><td>12-hour clock time, equivalent to <code>%-I:%M:%S %p</code></td><td><code>2:55:02 pm</code></td></tr>
+<tr><td><code>%R</code></td><td>24-hour HH:MM time, equivalent to <code>%-H:%M</code></td><td><code>14:55</code></td></tr>
+<tr><td><code>%S</code></td><td>Second (<code>00</code>-<code>59</code>)</td><td><code>02</code></td></tr>
+<tr><td><code>%T</code></td><td>24-hour clock time with seconds, equivalent to <code>%-H:%M:%S</code></td><td><code>14:55:02</code></td></tr>
+<tr><td><code>%u</code></td><td>ISO 8601 weekday as number with Monday as 1 (<code>1</code>-<code>7</code>)</td><td><code>4</code></td></tr>
+<tr><td><code>%U</code></td><td>Week number with the first Sunday as the start of week one (<code>00</code>-<code>53</code>)</td><td><code>33</code></td></tr>
+<tr><td><code>%V</code></td><td>ISO 8601 week number (<code>01</code>-<code>53</code>)</td><td><code>34</code></td></tr>
+<tr><td><code>%w</code></td><td>Weekday as a decimal number with Sunday as 0 (<code>0</code>-<code>6</code>)</td><td><code>4</code></td></tr>
+<tr><td><code>%W</code></td><td>Week number with the first Monday as the start of week one (<code>00</code>-<code>53</code>)</td><td><code>34</code></td></tr>
+<tr><td><code>%y</code></td><td>Year, last two digits (<code>00</code>-<code>99</code>)</td><td><code>01</code></td></tr>
+<tr><td><code>%Y</code></td><td>Full year, including <code>+</code> if ≥10,000</td><td><code>2001</code></td></tr>
+<tr><td><code>%z</code></td><td>ISO 8601 offset from UTC in timezone (+HHMM)</td><td><code>+0100</code></td></tr>
+<tr><td><code>%%</code></td><td>Literal <code>%</code></td><td><code>%</code></td></tr>
+</tbody></table>
+<h2 id="modifiers" class="section-header"><a href="#modifiers">Modifiers</a></h2>
+<p>All specifiers that are strictly numerical have modifiers for formatting.
+Adding a modifier to a non-supporting specifier is a no-op.</p>
+<!-- rust-lang/rust#65613 -->
+<style>.docblock code { white-space: pre-wrap; }</style>
+<table><thead><tr><th>Modifier</th><th>Behavior</th><th>Example</th></tr></thead><tbody>
+<tr><td><code>-</code> (dash)</td><td>No padding</td><td><code>%-d</code> =&gt; <code>5</code></td></tr>
+<tr><td><code>_</code> (underscore)</td><td>Pad with spaces</td><td><code>%_d</code> =&gt; <code> 5</code></td></tr>
+<tr><td><code>0</code></td><td>Pad with zeros</td><td><code>%0d</code> =&gt; <code>05</code></td></tr>
+</tbody></table>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table><tr class='module-item'><td><a class="mod" href="prelude/index.html" title='time::prelude mod'>prelude</a></td><td class='docblock-short'><p>A collection of imports that are widely useful.</p>
+</td></tr></table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table><tr class='module-item'><td><a class="macro" href="macro.date.html" title='time::date macro'>date</a></td><td class='docblock-short'><p>Construct a [<code>Date</code>] with a statically known value.</p>
+</td></tr><tr class='module-item'><td><a class="macro" href="macro.offset.html" title='time::offset macro'>offset</a></td><td class='docblock-short'><p>Construct a [<code>UtcOffset</code>] with a statically known value.</p>
+</td></tr><tr class='module-item'><td><a class="macro" href="macro.time.html" title='time::time macro'>time</a></td><td class='docblock-short'><p>Construct a [<code>Time</code>] with a statically known value.</p>
+</td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.ComponentRangeError.html" title='time::ComponentRangeError struct'>ComponentRangeError</a></td><td class='docblock-short'><p>An error type indicating that a component provided to a method was out of
+range, causing a failure.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.ConversionRangeError.html" title='time::ConversionRangeError struct'>ConversionRangeError</a></td><td class='docblock-short'><p>An error type indicating that a conversion failed because the target type
+could not store the initial value.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Date.html" title='time::Date struct'>Date</a></td><td class='docblock-short'><p>Calendar date.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Duration.html" title='time::Duration struct'>Duration</a></td><td class='docblock-short'><p>A span of time with nanosecond precision.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.IndeterminateOffsetError.html" title='time::IndeterminateOffsetError struct'>IndeterminateOffsetError</a></td><td class='docblock-short'><p>The system's UTC offset could not be determined at the given datetime.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Instant.html" title='time::Instant struct'>Instant</a></td><td class='docblock-short'><p>A measurement of a monotonically non-decreasing clock. Opaque and useful
+only with [<code>Duration</code>].</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.OffsetDateTime.html" title='time::OffsetDateTime struct'>OffsetDateTime</a></td><td class='docblock-short'><p>A [<code>PrimitiveDateTime</code>] with a [<code>UtcOffset</code>].</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.PrimitiveDateTime.html" title='time::PrimitiveDateTime struct'>PrimitiveDateTime</a></td><td class='docblock-short'><p>Combined date and time.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Time.html" title='time::Time struct'>Time</a></td><td class='docblock-short'><p>The clock time within a given date. Nanosecond precision.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.UtcOffset.html" title='time::UtcOffset struct'>UtcOffset</a></td><td class='docblock-short'><p>An offset from UTC.</p>
+</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.Error.html" title='time::Error enum'>Error</a></td><td class='docblock-short'><p>A unified error type for anything returned by a method in the time crate.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Format.html" title='time::Format enum'>Format</a></td><td class='docblock-short'><p>Various well-known formats, along with the possibility for a custom format
+(provided either at compile-time or runtime).</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.ParseError.html" title='time::ParseError enum'>ParseError</a></td><td class='docblock-short'><p>An error occurred while parsing.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Sign.html" title='time::Sign enum'>Sign</a></td><td class='docblock-short'><span class="stab deprecated">Deprecated</span><p>Contains the sign of a value: positive, negative, or zero.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.Weekday.html" title='time::Weekday enum'>Weekday</a></td><td class='docblock-short'><p>Days of the week.</p>
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.NumericalDuration.html" title='time::NumericalDuration trait'>NumericalDuration</a></td><td class='docblock-short'><p>Create <code>Duration</code>s from primitive and core numeric types.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.NumericalStdDuration.html" title='time::NumericalStdDuration trait'>NumericalStdDuration</a></td><td class='docblock-short'><p>Create <code>std::time::Duration</code>s from primitive and core numeric types.</p>
+</td></tr><tr class='module-item'><td><a class="trait" href="trait.NumericalStdDurationShort.html" title='time::NumericalStdDurationShort trait'>NumericalStdDurationShort</a></td><td class='docblock-short'><p>Create <code>std::time::Duration</code>s from primitive and core numeric types. Unless
+you are always expecting a <code>std::time::Duration</code>, you should prefer to use
+[<code>NumericalStdDuration</code>] for clarity.</p>
+</td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr class='module-item'><td><a class="fn" href="fn.days_in_year.html" title='time::days_in_year fn'>days_in_year</a></td><td class='docblock-short'><p>Get the number of calendar days in a given year.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.is_leap_year.html" title='time::is_leap_year fn'>is_leap_year</a></td><td class='docblock-short'><p>Returns if the provided year is a leap year in the proleptic Gregorian
+calendar. Uses <a href="https://en.wikipedia.org/wiki/Astronomical_year_numbering">astronomical year numbering</a>.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.parse.html" title='time::parse fn'>parse</a></td><td class='docblock-short'><p>Parse any parsable type from the time crate.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.precise_time_ns.html" title='time::precise_time_ns fn'>precise_time_ns</a></td><td class='docblock-short'><span class="stab deprecated">Deprecated</span></td></tr><tr class='module-item'><td><a class="fn" href="fn.precise_time_s.html" title='time::precise_time_s fn'>precise_time_s</a></td><td class='docblock-short'><span class="stab deprecated">Deprecated</span></td></tr><tr class='module-item'><td><a class="fn" href="fn.validate_format_string.html" title='time::validate_format_string fn'>validate_format_string</a></td><td class='docblock-short'><p>Checks if a user-provided formatting string is valid. If it isn't, a
+description of the error is returned.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.weeks_in_year.html" title='time::weeks_in_year fn'>weeks_in_year</a></td><td class='docblock-short'><p>Get the number of weeks in the ISO year.</p>
+</td></tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table><tr class='module-item'><td><a class="type" href="type.PreciseTime.html" title='time::PreciseTime type'>PreciseTime</a></td><td class='docblock-short'><span class="stab deprecated">Deprecated</span></td></tr><tr class='module-item'><td><a class="type" href="type.Result.html" title='time::Result type'>Result</a></td><td class='docblock-short'><p>An alias for <code>Result</code> with a generic error from the time crate.</p>
+</td></tr><tr class='module-item'><td><a class="type" href="type.SteadyTime.html" title='time::SteadyTime type'>SteadyTime</a></td><td class='docblock-short'><span class="stab deprecated">Deprecated</span></td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../";window.currentCrate = "time";</script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
