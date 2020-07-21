@@ -42,6 +42,8 @@ fn main() -> Result<(), GoErr>{
   // Or sync
   let token = get_token_blocking(&jwt, &credentials)?;
 
+  // Token provides `access_token` method that outputs a value that should be placed in the Authorization header
+
   Ok(())
   
 }
