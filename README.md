@@ -1,6 +1,7 @@
 ![build](https://github.com/durch/rust-goauth/workflows/Rust/badge.svg)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/durch/rust-goauth/blob/master/LICENSE)
 [![](http://meritbadge.herokuapp.com/goauth)](https://crates.io/crates/goauth)
+[![](https://img.shields.io/crates/d/goauth.svg)](https://crates.io/crates/goauth)
 
 ## rust-goauth [[docs](https://docs.rs/goauth)]
 
