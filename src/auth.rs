@@ -67,7 +67,7 @@ impl Error for TokenErr {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Eq, PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct Token {
     access_token: String,
     token_type: String,
