@@ -7,6 +7,7 @@ extern crate doc_comment;
 
 pub mod auth;
 pub mod credentials;
+pub mod fetcher;
 pub mod scopes;
 
 use auth::{JwtClaims, Token};
@@ -183,15 +184,28 @@ pub async fn get_token(
     jwt: &Jwt<JwtClaims>,
     credentials: &Credentials,
 ) -> Result<Token> {
+    let client = Client::new();
+
+    get_token_with_client(
+        &client,
+        jwt,
+        credentials
+    ).await
+}
+
+pub async fn get_token_with_client(
+    client: &Client,
+    jwt: &Jwt<JwtClaims>,
+    credentials: &Credentials,
+) -> Result<Token> {
     let final_jwt = jwt.finalize()?;
     let request_body = form_body(&final_jwt);
 
-    let client = Client::new();
     let response = client
         .post(&credentials.token_uri())
         .form(&request_body)
         .send().await?;
-    
+
     let token = response.json::<Token>().await?;
     Ok(token)
 }
