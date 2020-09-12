@@ -15,6 +15,7 @@ name = "goauth"
 path = "src/lib.rs"
 
 [dependencies]
+arc-swap = "^0.4.7"
 serde = "^1.0"
 serde_derive = "^1.0"
 serde_json = "^1.0"
