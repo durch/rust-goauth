@@ -237,7 +237,7 @@ mod tests {
         let mock = mock("POST", "/")
             .with_status(200)
             .with_body(json)
-            .expect(1) // we expect to be hit twice due to refresh
+            .expect(1) // we expect to be hit only once
             .create();
 
         // this should work
