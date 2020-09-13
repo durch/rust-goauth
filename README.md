@@ -19,7 +19,9 @@ use goauth::auth::JwtClaims;
 use goauth::scopes::Scope;
 use goauth::{get_token, get_token_blocking, GoErr};
 use goauth::credentials::Credentials;
+use goauth::fetcher::TokenFetcher;
 use smpl_jwt::{RSAKey, Jwt};
+use time::Duration;
 
 fn main() -> Result<(), GoErr>{
   let token_url = "https://www.googleapis.com/oauth2/v4/token";
@@ -45,7 +47,39 @@ fn main() -> Result<(), GoErr>{
 
   // Token provides `access_token` method that outputs a value that should be placed in the Authorization header
 
+  // Or use the TokenFetcher abstraction which will automatically refresh tokens
+  let fetcher = TokenFetcher::new(jwt, credentials, Duration::new(1, 0));
+
+  let token = async {
+    match fetcher.fetch_token().await {
+      Ok(token) => token,
+      Err(e) => panic!(e)
+    }
+  };
+
+  // Now a couple seconds later we want the token again - the initial token is cached so it will re-use
+  // the same token, saving a network trip to fetch another token
+  let new_token = async {
+    match fetcher.fetch_token().await {
+      Ok(token) => token,
+      Err(e) => panic!(e)
+    }
+  };
+
+  assert_eq!(token, new_token);
+
+  // Now say the token has expired or is close to expiring ("close" defined by the configurable
+  // `refresh_buffer` parameter) at this point "later in the program." The next call to
+  // `fetch_token` will notice this and automatically fetch a new token, cache it, and return it.
+  let new_token = async {
+    match fetcher.fetch_token().await {
+      Ok(token) => token,
+      Err(e) => panic!(e)
+    }
+  };
+
+  assert_ne!(token, new_token);
+
   Ok(())
-  
 }
 ```
