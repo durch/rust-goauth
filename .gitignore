@@ -12,3 +12,5 @@ libbigtable.rlib
 pk.pem
 !/src/auth.rs
 !/.gitignore
+src/bin/main.rs
+oneiros*
