@@ -15,16 +15,18 @@ name = "goauth"
 path = "src/lib.rs"
 
 [dependencies]
+arc-swap = "^0.4.7"
 serde = "^1.0"
 serde_derive = "^1.0"
 serde_json = "^1.0"
 time = "0.2.14"
 log = "0.4.8"
 smpl_jwt = "^0.5"
-reqwest = {version = "0.10.4", features = ["blocking", "json"]}
+reqwest = { version = "0.10.4", features = ["blocking", "json"] }
 futures = "0.3.4"
 simpl = "0.1.0"
-tokio = "^0.2"
+tokio = { version = "^0.2", features = ["macros"] }
 
 [dev-dependencies]
 doc-comment = "0.3.3"
+mockito = "^0.27.0"

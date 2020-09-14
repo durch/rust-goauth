@@ -15,7 +15,8 @@ pub struct Credentials {
     client_email: String,
     client_id: String,
     auth_uri: String,
-    token_uri: String,
+    // pub(crate) to this can be overriden in tests
+    pub(crate) token_uri: String,
     auth_provider_x509_cert_url: String,
     client_x509_cert_url: String
 }
