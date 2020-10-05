@@ -206,8 +206,13 @@ pub async fn get_token_with_client(
         .form(&request_body)
         .send().await?;
 
-    let token = response.json::<Token>().await?;
-    Ok(token)
+    if response.status().is_success() {
+        let token = response.json::<Token>().await?;
+        Ok(token)
+    } else {
+        let token_err = response.json::<auth::TokenErr>().await?;
+        Err(GoErr::from(token_err))
+    }
 }
 
 #[cfg(test)]
