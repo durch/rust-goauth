@@ -25,8 +25,9 @@ smpl_jwt = "0.5"
 reqwest = { version = "0.10", features = ["blocking", "json"] }
 futures = "0.3"
 simpl = "0.1"
-tokio = { version = "0.3", features = ["macros", "rt", "rt-multi-thread"] }
+tokio = { version = "0.3", features = ["rt-multi-thread"] }
 
 [dev-dependencies]
+tokio = { version = "0.3", features = ["macros", "rt-multi-thread"] }
 doc-comment = "0.3"
 mockito = "0.27"
