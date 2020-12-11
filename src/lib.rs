@@ -137,7 +137,7 @@ pub fn get_token_blocking(
     jwt: &Jwt<JwtClaims>,
     credentials: &Credentials,
 ) -> Result<Token> {
-    let mut rt = Runtime::new()?;
+    let rt = Runtime::new()?;
     rt.block_on(get_token(jwt, credentials))
 }
 

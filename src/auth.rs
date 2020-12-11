@@ -23,7 +23,7 @@ impl JwtClaims {
     ) -> Self {
         let iat = match valid_from {
             Some(x) => x,
-            None => time::OffsetDateTime::now_utc().timestamp(),
+            None => time::OffsetDateTime::now_utc().unix_timestamp(),
         };
         let exp = match expires_after {
             Some(x) => iat + x,
