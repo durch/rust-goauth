@@ -38,7 +38,7 @@ impl TokenFetcher {
     pub fn new(
         jwt: Jwt<JwtClaims>,
         credentials: Credentials,
-        refresh_buffer: Duration
+        refresh_buffer: Duration,
     ) -> TokenFetcher {
         TokenFetcher::with_client(Client::new(), jwt, credentials, refresh_buffer)
     }
@@ -47,7 +47,7 @@ impl TokenFetcher {
         client: Client,
         jwt: Jwt<JwtClaims>,
         credentials: Credentials,
-        refresh_buffer: Duration
+        refresh_buffer: Duration,
     ) -> TokenFetcher {
         let token_state = ArcSwapOption::from(None);
 
@@ -81,7 +81,7 @@ impl TokenFetcher {
                     // We have an existing, valid token, so return immediately
                     Ok(token_state.token.clone())
                 }
-            },
+            }
         }
     }
 
@@ -92,7 +92,10 @@ impl TokenFetcher {
         let token = get_token_with_client(&self.client, &self.jwt, &self.credentials).await?;
         let expires_in = Duration::new(token.expires_in().into(), 0);
 
-        assert!(expires_in >= self.refresh_buffer, "Received a token whose expires_in is less than the configured refresh buffer!");
+        assert!(
+            expires_in >= self.refresh_buffer,
+            "Received a token whose expires_in is less than the configured refresh buffer!"
+        );
 
         let refresh_at = now + (expires_in - self.refresh_buffer);
         let token_state = TokenState {
@@ -114,14 +117,15 @@ mod tests {
     use mockito::{self, mock};
     use smpl_jwt::Jwt;
     use std::thread;
-    use std::time::{Duration as StdDuration};
+    use std::time::Duration as StdDuration;
     use time::Duration;
 
     fn get_mocks() -> (Jwt<JwtClaims>, Credentials) {
         let token_url = mockito::server_url();
         let iss = "some_iss";
 
-        let mut credentials = Credentials::from_file("dummy_credentials_file_for_tests.json").unwrap();
+        let mut credentials =
+            Credentials::from_file("dummy_credentials_file_for_tests.json").unwrap();
         credentials.token_uri = token_url.clone();
 
         let claims = JwtClaims::new(
@@ -158,10 +162,7 @@ mod tests {
 
         let (expected_token, json) = token_json("token", "Bearer", 1);
 
-        let _mock = mock("POST", "/")
-            .with_status(200)
-            .with_body(json)
-            .create();
+        let _mock = mock("POST", "/").with_status(200).with_body(json).create();
 
         let token = fetcher.fetch_token().await.unwrap();
         assert_eq!(expected_token, token);

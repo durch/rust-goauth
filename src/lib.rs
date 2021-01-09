@@ -29,13 +29,13 @@ fn form_body(body: &str) -> Vec<(&str, &str)> {
 }
 
 simpl::err!(GoErr,
-    {
-        Io@std::io::Error;
-        Jwt@smpl_jwt::JwtErr;
-        Json@serde_json::Error;
-        Reqwest@reqwest::Error;
-        Token@auth::TokenErr;
-    });
+{
+    Io@std::io::Error;
+    Jwt@smpl_jwt::JwtErr;
+    Json@serde_json::Error;
+    Reqwest@reqwest::Error;
+    Token@auth::TokenErr;
+});
 
 /// Get Token which can be used to authenticate further request
 /// ### Example
@@ -84,17 +84,11 @@ pub fn get_token_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Result<Token
     Token::from_str(&response.text()?)
 }
 
-pub fn get_token_as_string_legacy(
-    jwt: &Jwt<JwtClaims>,
-    url: Option<&str>,
-) -> Result<String> {
+pub fn get_token_as_string_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Result<String> {
     Ok(serde_json::to_string(&get_token_legacy(jwt, url)?)?)
 }
 
-pub fn get_token_as_string(
-    jwt: &Jwt<JwtClaims>,
-    credentials: &Credentials,
-) -> Result<String> {
+pub fn get_token_as_string(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<String> {
     Ok(serde_json::to_string(&get_token_blocking(
         jwt,
         credentials,
@@ -133,10 +127,7 @@ pub fn get_token_as_string(
 /// }
 ///
 /// ```
-pub fn get_token_blocking(
-    jwt: &Jwt<JwtClaims>,
-    credentials: &Credentials,
-) -> Result<Token> {
+pub fn get_token_blocking(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token> {
     let rt = Runtime::new()?;
     rt.block_on(get_token(jwt, credentials))
 }
@@ -180,17 +171,10 @@ pub fn get_token_blocking(
 /// }
 ///
 /// ```
-pub async fn get_token(
-    jwt: &Jwt<JwtClaims>,
-    credentials: &Credentials,
-) -> Result<Token> {
+pub async fn get_token(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token> {
     let client = Client::new();
 
-    get_token_with_client(
-        &client,
-        jwt,
-        credentials
-    ).await
+    get_token_with_client(&client, jwt, credentials).await
 }
 
 pub async fn get_token_with_client(
@@ -204,7 +188,8 @@ pub async fn get_token_with_client(
     let response = client
         .post(&credentials.token_uri())
         .form(&request_body)
-        .send().await?;
+        .send()
+        .await?;
 
     if response.status().is_success() {
         let token = response.json::<Token>().await?;

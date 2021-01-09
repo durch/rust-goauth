@@ -1,7 +1,7 @@
-use std::io::prelude::*;
-use std::fs::File;
-use crate::{Result, GoErr};
+use crate::{GoErr, Result};
 use smpl_jwt::RSAKey;
+use std::fs::File;
+use std::io::prelude::*;
 
 use std::str::FromStr;
 
@@ -18,7 +18,7 @@ pub struct Credentials {
     // pub(crate) to this can be overriden in tests
     pub(crate) token_uri: String,
     auth_provider_x509_cert_url: String,
-    client_x509_cert_url: String
+    client_x509_cert_url: String,
 }
 
 impl Credentials {

@@ -15,19 +15,19 @@ name = "goauth"
 path = "src/lib.rs"
 
 [dependencies]
-arc-swap = "0.4"
+arc-swap = "1"
 serde = "^1"
 serde_derive = "1"
 serde_json = "1"
 time = "0.2"
 log = "0.4"
-smpl_jwt = "0.5"
-reqwest = { version = "0.10", features = ["blocking", "json"] }
+smpl_jwt = "0.6"
+reqwest = { version = "0.11", features = ["blocking", "json"] }
 futures = "0.3"
 simpl = "0.1"
-tokio = { version = "0.3", features = ["rt-multi-thread"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
 
 [dev-dependencies]
-tokio = { version = "0.3", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 doc-comment = "0.3"
-mockito = "0.27"
+mockito = "0.28"
