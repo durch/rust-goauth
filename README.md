@@ -47,8 +47,9 @@ fn main() -> Result<(), GoErr>{
 
   // Token provides `access_token` method that outputs a value that should be placed in the Authorization header
 
-  // Or use the TokenFetcher abstraction which will automatically refresh tokens
-  let fetcher = TokenFetcher::new(jwt, credentials, Duration::new(1, 0));
+  // Or use the TokenFetcher abstraction which will automatically refresh tokens. Fetcher needs to be mutable in order
+  // to be able to refresh `JwtCalims` `iat` and `exp`
+  let mut fetcher = TokenFetcher::new(jwt, credentials, Duration::new(1, 0));
 
   let token = async {
     match fetcher.fetch_token().await {

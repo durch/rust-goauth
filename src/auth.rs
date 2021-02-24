@@ -14,6 +14,35 @@ pub struct JwtClaims {
 }
 
 impl JwtClaims {
+    pub fn update(&mut self, valid_from: Option<i64>, expires_after: Option<i64>) {
+        let iat = match valid_from {
+            Some(x) => x,
+            None => time::OffsetDateTime::now_utc().unix_timestamp(),
+        };
+        let expires_after = match expires_after {
+            Some(x) => x,
+            None => self.exp - self.iat,
+        };
+        self.iat = iat;
+        self.exp = iat + expires_after
+    }
+
+    pub fn refresh(&self, valid_from: Option<i64>, expires_after: Option<i64>) -> JwtClaims {
+        let iat = match valid_from {
+            Some(x) => x,
+            None => time::OffsetDateTime::now_utc().unix_timestamp(),
+        };
+        let expires_after = match expires_after {
+            Some(x) => x,
+            None => self.exp - self.iat,
+        };
+        let mut claims = self.clone();
+        claims.iat = iat;
+        claims.exp = iat + expires_after;
+        claims
+
+    }
+
     pub fn new(
         service_acc_id: String,
         scope: &Scope,

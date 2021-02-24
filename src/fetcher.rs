@@ -64,7 +64,7 @@ impl TokenFetcher {
     /// currently stored token's `expires_in` field and the configured
     /// `refresh_buffer`. If it is, return the stored token. If not,
     /// fetch a new token, store it, and return the new token.
-    pub async fn fetch_token(&self) -> Result<Token> {
+    pub async fn fetch_token(&mut self) -> Result<Token> {
         let token_state = self.token_state.load();
 
         match &*token_state {
@@ -86,8 +86,10 @@ impl TokenFetcher {
     }
 
     /// Refresh the token
-    async fn get_token(&self) -> Result<Token> {
+    async fn get_token(&mut self) -> Result<Token> {
         let now = OffsetDateTime::now_utc();
+        // Refresh jwt claims
+        self.jwt.body_mut().update(Some(now.unix_timestamp()), None);
 
         let token = get_token_with_client(&self.client, &self.jwt, &self.credentials).await?;
         let expires_in = Duration::new(token.expires_in().into(), 0);
@@ -158,7 +160,7 @@ mod tests {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = Duration::new(0, 0);
-        let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
+        let mut fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         let (expected_token, json) = token_json("token", "Bearer", 1);
 
@@ -173,7 +175,7 @@ mod tests {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = Duration::new(0, 0);
-        let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
+        let mut fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         let expires_in = 1;
         let (_expected_token, json) = token_json("token", "Bearer", expires_in);
@@ -201,7 +203,7 @@ mod tests {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = 4;
-        let fetcher = TokenFetcher::new(jwt, credentials, Duration::new(refresh_buffer, 0));
+        let mut fetcher = TokenFetcher::new(jwt, credentials, Duration::new(refresh_buffer, 0));
 
         let expires_in = 5;
         let (_expected_token, json) = token_json("token", "Bearer", expires_in);
@@ -230,7 +232,7 @@ mod tests {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = Duration::new(0, 0);
-        let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
+        let mut fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         let expires_in = 1;
         let (_expected_token, json) = token_json("token", "Bearer", expires_in);
