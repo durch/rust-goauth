@@ -3,12 +3,12 @@
 
 use crate::auth::{JwtClaims, Token};
 use crate::credentials::Credentials;
-use crate::{get_token_with_client, Result};
+use crate::{Result, get_token_with_client_and_body};
 
 use arc_swap::ArcSwapOption;
 use reqwest::Client;
 use smpl_jwt::Jwt;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use time::{Duration, OffsetDateTime};
 
 /// A `TokenFetcher` stores a `Token` on first fetch and will continue returning
@@ -21,7 +21,7 @@ use time::{Duration, OffsetDateTime};
 /// that (along with the new expired time), and return the new token.
 pub struct TokenFetcher {
     client: Client,
-    jwt: Jwt<JwtClaims>,
+    jwt: Arc<Mutex<Jwt<JwtClaims>>>,
     credentials: Credentials,
     token_state: ArcSwapOption<TokenState>,
     refresh_buffer: Duration,
@@ -53,7 +53,7 @@ impl TokenFetcher {
 
         TokenFetcher {
             client,
-            jwt,
+            jwt: Arc::new(Mutex::new(jwt)),
             credentials,
             token_state,
             refresh_buffer,
@@ -88,8 +88,8 @@ impl TokenFetcher {
     /// Refresh the token
     async fn get_token(&self) -> Result<Token> {
         let now = OffsetDateTime::now_utc();
-
-        let token = get_token_with_client(&self.client, &self.jwt, &self.credentials).await?;
+        let jwt_body = self.get_jwt_body(now)?;
+        let token = get_token_with_client_and_body(&self.client, jwt_body, &self.credentials).await?;
         let expires_in = Duration::new(token.expires_in().into(), 0);
 
         assert!(
@@ -105,6 +105,14 @@ impl TokenFetcher {
 
         self.token_state.swap(Some(Arc::new(token_state)));
         Ok(token)
+    }
+
+    fn get_jwt_body(&self, valid_from: OffsetDateTime) -> Result<String> {
+        let mut jwt = self.jwt.lock().unwrap();
+        // Refresh jwt claims
+        jwt.body_mut().update(Some(valid_from.unix_timestamp()), None);
+        let jwt_body = jwt.finalize()?;
+        Ok(jwt_body)
     }
 }
 
@@ -248,5 +256,17 @@ mod tests {
         fetcher.fetch_token().await.unwrap();
 
         mock.assert();
+    }
+
+    /// Ensure that `TokenFetcher` is `Send` and `Sync`
+    #[test]
+    fn is_send_and_sync() {
+        let (jwt, credentials) = get_mocks();
+        let refresh_buffer = Duration::new(0, 0);
+        let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
+
+        fn check(_: &(dyn Send + Sync)) {}
+
+        check(&fetcher);
     }
 }

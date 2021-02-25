@@ -182,8 +182,17 @@ pub async fn get_token_with_client(
     jwt: &Jwt<JwtClaims>,
     credentials: &Credentials,
 ) -> Result<Token> {
-    let final_jwt = jwt.finalize()?;
-    let request_body = form_body(&final_jwt);
+    let jwt_body = jwt.finalize()?;
+
+    get_token_with_client_and_body(client, jwt_body, credentials).await
+}
+
+pub(crate) async fn get_token_with_client_and_body(
+    client: &Client,
+    jwt_body: String,
+    credentials: &Credentials,
+) -> Result<Token> {
+    let request_body = form_body(&jwt_body);
 
     let response = client
         .post(&credentials.token_uri())
