@@ -204,6 +204,7 @@ pub enum Scope {
     YouTubepartnerChannelAudit,
     YouTubeReadOnly,
     YouTubeUpload,
+    CloudLanguage,
 }
 
 impl Scope {
@@ -669,6 +670,7 @@ impl Scope {
                 String::from("https://www.googleapis.com/auth/youtube.readonly")
             }
             Scope::YouTubeUpload => String::from("https://www.googleapis.com/auth/youtube.upload"),
+            Scope::CloudLanguage => String::from("https://www.googleapis.com/auth/cloud-language")
         }
     }
 }
