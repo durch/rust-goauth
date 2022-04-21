@@ -1,6 +1,6 @@
 [package]
 name = "goauth"
-version = "0.11.1"
+version = "0.12.0"
 authors = ["Drazen Urch <github@drazenur.ch>"]
 description = "Crate for authenticating Server to Server Apps for Google Cloud Engine."
 repository = "https://github.com/durch/rust-goauth"
@@ -21,7 +21,7 @@ serde_derive = "1"
 serde_json = "1"
 time = "0.3"
 log = "0.4"
-smpl_jwt = "0.6.1"
+smpl_jwt = "0.7.0"
 reqwest = { version = "0.11", features = ["blocking", "json"] }
 futures = "0.3"
 simpl = "0.1"
@@ -30,4 +30,4 @@ tokio = { version = "1", features = ["rt-multi-thread"] }
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 doc-comment = "0.3"
-mockito = "0.28"
+mockito = "0.31"
