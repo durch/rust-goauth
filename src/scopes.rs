@@ -142,6 +142,7 @@ pub enum Scope {
     LoggingRead,
     LoggingWrite,
     M8Feeds,
+    MalachiteIngestion,
     ManufacturerCenter,
     Monitoring,
     MonitoringRead,
@@ -526,6 +527,9 @@ impl Scope {
             Scope::LoggingRead => String::from("https://www.googleapis.com/auth/logging.read"),
             Scope::LoggingWrite => String::from("https://www.googleapis.com/auth/logging.write"),
             Scope::M8Feeds => String::from("https://www.google.com/m8/feeds"),
+            Scope::MalachiteIngestion => {
+                String::from("https://www.googleapis.com/auth/malachite-ingestion")
+            }
             Scope::ManufacturerCenter => {
                 String::from("https://www.googleapis.com/auth/manufacturercenter")
             }
