@@ -86,6 +86,7 @@ pub enum Scope {
     CloudRuntimeConfig,
     CloudUserAccounts,
     CloudUserAccountsReadOnly,
+    CloudVision,
     Compute,
     ComputeReadOnly,
     Contacts,
@@ -674,7 +675,8 @@ impl Scope {
                 String::from("https://www.googleapis.com/auth/youtube.readonly")
             }
             Scope::YouTubeUpload => String::from("https://www.googleapis.com/auth/youtube.upload"),
-            Scope::CloudLanguage => String::from("https://www.googleapis.com/auth/cloud-language")
+            Scope::CloudLanguage => String::from("https://www.googleapis.com/auth/cloud-language"),
+            Scope::CloudVision => String::from("https://www.googleapis.com/auth/cloud-vision"),
         }
     }
 }
