@@ -29,7 +29,7 @@ fn main() -> Result<(), GoErr>{
 
   let credentials = Credentials::from_file("dummy_credentials_file_for_tests.json").unwrap();
   let claims = JwtClaims::new(String::from(iss),
-                             &Scope::DevStorageReadWrite,
+                             &[Scope::DevStorageReadWrite],
                              String::from(token_url),
                              None, None);
   let jwt = Jwt::new(claims, credentials.rsa_key().unwrap(), None);

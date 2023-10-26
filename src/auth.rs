@@ -40,12 +40,11 @@ impl JwtClaims {
         claims.iat = iat;
         claims.exp = iat + expires_after;
         claims
-
     }
 
     pub fn new(
         service_acc_id: String,
-        scope: &Scope,
+        scopes: &[Scope],
         aud_url: String,
         valid_from: Option<i64>,
         expires_after: Option<i64>,
@@ -60,7 +59,11 @@ impl JwtClaims {
         };
         JwtClaims {
             iss: service_acc_id,
-            scope: scope.url(),
+            scope: scopes
+                .iter()
+                .map(|scope| scope.url())
+                .collect::<Vec<String>>()
+                .join(" "),
             aud: aud_url,
             exp,
             iat,

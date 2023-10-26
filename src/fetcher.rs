@@ -3,7 +3,7 @@
 
 use crate::auth::{JwtClaims, Token};
 use crate::credentials::Credentials;
-use crate::{Result, get_token_with_client_and_body};
+use crate::{get_token_with_client_and_body, Result};
 
 use arc_swap::ArcSwapOption;
 use reqwest::Client;
@@ -89,7 +89,8 @@ impl TokenFetcher {
     async fn get_token(&self) -> Result<Token> {
         let now = OffsetDateTime::now_utc();
         let jwt_body = self.get_jwt_body(now)?;
-        let token = get_token_with_client_and_body(&self.client, jwt_body, &self.credentials).await?;
+        let token =
+            get_token_with_client_and_body(&self.client, jwt_body, &self.credentials).await?;
         let expires_in = Duration::new(token.expires_in().into(), 0);
 
         assert!(
@@ -107,10 +108,12 @@ impl TokenFetcher {
         Ok(token)
     }
 
+    #[allow(clippy::result_large_err)]
     fn get_jwt_body(&self, valid_from: OffsetDateTime) -> Result<String> {
         let mut jwt = self.jwt.lock().unwrap();
         // Refresh jwt claims
-        jwt.body_mut().update(Some(valid_from.unix_timestamp()), None);
+        jwt.body_mut()
+            .update(Some(valid_from.unix_timestamp()), None);
         let jwt_body = jwt.finalize()?;
         Ok(jwt_body)
     }
@@ -138,7 +141,7 @@ mod tests {
 
         let claims = JwtClaims::new(
             String::from(iss),
-            &Scope::DevStorageReadWrite,
+            &[Scope::DevStorageReadWrite],
             String::from(token_url.clone()),
             None,
             None,
