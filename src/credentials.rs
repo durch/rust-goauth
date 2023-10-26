@@ -22,6 +22,7 @@ pub struct Credentials {
 }
 
 impl Credentials {
+    #[allow(clippy::result_large_err)]
     pub fn from_file(fp: &str) -> Result<Self> {
         let mut f = File::open(fp)?;
         let mut buffer = Vec::new();
@@ -29,6 +30,7 @@ impl Credentials {
         Ok(serde_json::from_slice(buffer.as_slice())?)
     }
 
+    #[allow(clippy::result_large_err)]
     pub fn rsa_key(&self) -> Result<RSAKey> {
         Ok(RSAKey::from_str(&self.private_key)?)
     }
