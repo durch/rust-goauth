@@ -13,11 +13,8 @@ pub mod scopes;
 use auth::{JwtClaims, Token};
 use credentials::Credentials;
 
-use reqwest::Client;
 pub use smpl_jwt::Jwt;
 use std::str::FromStr;
-
-use tokio::runtime::Runtime;
 
 const DEFAULT_URL: &str = "https://www.googleapis.com/oauth2/v4/token";
 
@@ -33,7 +30,7 @@ simpl::err!(GoErr,
     Io@std::io::Error;
     Jwt@smpl_jwt::JwtErr;
     Json@serde_json::Error;
-    Reqwest@reqwest::Error;
+    Reqwest@attohttpc::Error;
     Token@auth::TokenErr;
 });
 
@@ -74,12 +71,10 @@ simpl::err!(GoErr,
 /// ```
 #[allow(clippy::result_large_err)]
 pub fn get_token_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Result<Token> {
-    let client = reqwest::blocking::Client::new();
     let final_jwt = jwt.finalize()?;
     let request_body = form_body(&final_jwt);
-    let response = client
-        .post(url.unwrap_or(DEFAULT_URL))
-        .form(&request_body)
+    let response = attohttpc::post(url.unwrap_or(DEFAULT_URL))
+        .form(&request_body)?
         .send()?;
 
     Token::from_str(&response.text()?)
@@ -90,61 +85,14 @@ pub fn get_token_as_string_legacy(jwt: &Jwt<JwtClaims>, url: Option<&str>) -> Re
     Ok(serde_json::to_string(&get_token_legacy(jwt, url)?)?)
 }
 
-#[allow(clippy::result_large_err)]
-pub fn get_token_as_string(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<String> {
-    Ok(serde_json::to_string(&get_token_blocking(
-        jwt,
-        credentials,
-    )?)?)
-}
-
-/// Get Token which can be used to authenticate further request
-/// ### Example
-///
-/// ```
-/// extern crate smpl_jwt;
-/// extern crate goauth;
-/// #[macro_use]
-/// extern crate log;
-///
-/// use goauth::auth::JwtClaims;
-/// use goauth::scopes::Scope;
-/// use goauth::credentials::Credentials;
-/// use goauth::get_token_blocking;
-/// use smpl_jwt::Jwt;
-///
-/// fn main() {
-///
-///   let credentials = Credentials::from_file("dummy_credentials_file_for_tests.json").unwrap();
-///
-///   let claims = JwtClaims::new(credentials.iss(),
-///                              &[Scope::DevStorageReadWrite],
-///                              credentials.token_uri(),
-///                              None, None);
-///
-///   let jwt = Jwt::new(claims, credentials.rsa_key().unwrap(), None);
-///   match get_token_blocking(&jwt, &credentials) {
-///     Ok(x) => debug!("{}", x),
-///     Err(e) => debug!("{}", e)
-///   };
-/// }
-///
-/// ```
-#[allow(clippy::result_large_err)]
-pub fn get_token_blocking(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token> {
-    let rt = Runtime::new()?;
-    rt.block_on(get_token(jwt, credentials))
-}
-
 /// Async get Token which can be used to authenticate further request
 /// ### Example
 ///
-/// ```
+/// ```rust no_run
 /// extern crate smpl_jwt;
 /// extern crate goauth;
 /// #[macro_use]
 /// extern crate log;
-/// extern crate futures;
 ///
 /// use goauth::auth::JwtClaims;
 /// use goauth::scopes::Scope;
@@ -152,7 +100,6 @@ pub fn get_token_blocking(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Re
 /// use goauth::GoErr;
 /// use goauth::get_token;
 /// use smpl_jwt::Jwt;
-/// use futures::future::Future;
 ///
 ///
 /// fn main() -> Result<(), GoErr> {
@@ -165,50 +112,39 @@ pub fn get_token_blocking(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Re
 ///                              None, None);
 ///
 ///   let jwt = Jwt::new(claims, credentials.rsa_key().unwrap(), None);
-///   async {
-///     match get_token(&jwt, &credentials).await {
+///     match get_token(&jwt, &credentials) {
 ///         Ok(token) => println!("{}", token),
-///         Err(_) => panic!("An error occurred, somewhere in there, try debugging with `get_token_with_creds`")
-///     }
+///         Err(e) => panic!("{}", e)
 ///   };
 ///   Ok(())
 /// }
 ///
 /// ```
-pub async fn get_token(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token> {
-    let client = Client::new();
-
-    get_token_with_client(&client, jwt, credentials).await
+pub fn get_token(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token> {
+    get_token_with_client(jwt, credentials)
 }
 
-pub async fn get_token_with_client(
-    client: &Client,
-    jwt: &Jwt<JwtClaims>,
-    credentials: &Credentials,
-) -> Result<Token> {
+pub fn get_token_with_client(jwt: &Jwt<JwtClaims>, credentials: &Credentials) -> Result<Token> {
     let jwt_body = jwt.finalize()?;
 
-    get_token_with_client_and_body(client, jwt_body, credentials).await
+    get_token_with_client_and_body(jwt_body, credentials)
 }
 
-pub(crate) async fn get_token_with_client_and_body(
-    client: &Client,
+pub(crate) fn get_token_with_client_and_body(
     jwt_body: String,
     credentials: &Credentials,
 ) -> Result<Token> {
     let request_body = form_body(&jwt_body);
 
-    let response = client
-        .post(&credentials.token_uri())
-        .form(&request_body)
-        .send()
-        .await?;
+    let response = attohttpc::post(credentials.token_uri())
+        .form(&request_body)?
+        .send()?;
 
     if response.status().is_success() {
-        let token = response.json::<Token>().await?;
+        let token = response.json::<Token>()?;
         Ok(token)
     } else {
-        let token_err = response.json::<auth::TokenErr>().await?;
+        let token_err = response.json::<auth::TokenErr>()?;
         Err(GoErr::from(token_err))
     }
 }

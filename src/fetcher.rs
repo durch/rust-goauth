@@ -6,7 +6,6 @@ use crate::credentials::Credentials;
 use crate::{get_token_with_client_and_body, Result};
 
 use arc_swap::ArcSwapOption;
-use reqwest::Client;
 use smpl_jwt::Jwt;
 use std::sync::{Arc, Mutex};
 use time::{Duration, OffsetDateTime};
@@ -20,7 +19,6 @@ use time::{Duration, OffsetDateTime};
 /// is within the `refresh_buffer` window, it will fetch a new token, store
 /// that (along with the new expired time), and return the new token.
 pub struct TokenFetcher {
-    client: Client,
     jwt: Arc<Mutex<Jwt<JwtClaims>>>,
     credentials: Credentials,
     token_state: ArcSwapOption<TokenState>,
@@ -40,16 +38,10 @@ impl TokenFetcher {
         credentials: Credentials,
         refresh_buffer_seconds: i64,
     ) -> TokenFetcher {
-        TokenFetcher::with_client(
-            Client::new(),
-            jwt,
-            credentials,
-            Duration::new(refresh_buffer_seconds, 0),
-        )
+        TokenFetcher::with_client(jwt, credentials, Duration::new(refresh_buffer_seconds, 0))
     }
 
     pub fn with_client(
-        client: Client,
         jwt: Jwt<JwtClaims>,
         credentials: Credentials,
         refresh_buffer: Duration,
@@ -57,7 +49,6 @@ impl TokenFetcher {
         let token_state = ArcSwapOption::from(None);
 
         TokenFetcher {
-            client,
             jwt: Arc::new(Mutex::new(jwt)),
             credentials,
             token_state,
@@ -69,19 +60,19 @@ impl TokenFetcher {
     /// currently stored token's `expires_in` field and the configured
     /// `refresh_buffer`. If it is, return the stored token. If not,
     /// fetch a new token, store it, and return the new token.
-    pub async fn fetch_token(&self) -> Result<Token> {
+    pub fn fetch_token(&self) -> Result<Token> {
         let token_state = self.token_state.load();
 
         match &*token_state {
             // First time calling `fetch_token` since initialization, so fetch
             // a token.
-            None => self.get_token().await,
+            None => self.get_token(),
             Some(token_state) => {
                 let now = OffsetDateTime::now_utc();
 
                 if now >= token_state.refresh_at {
                     // We have an existing token but it is time to refresh it
-                    self.get_token().await
+                    self.get_token()
                 } else {
                     // We have an existing, valid token, so return immediately
                     Ok(token_state.token.clone())
@@ -91,11 +82,10 @@ impl TokenFetcher {
     }
 
     /// Refresh the token
-    async fn get_token(&self) -> Result<Token> {
+    fn get_token(&self) -> Result<Token> {
         let now = OffsetDateTime::now_utc();
         let jwt_body = self.get_jwt_body(now)?;
-        let token =
-            get_token_with_client_and_body(&self.client, jwt_body, &self.credentials).await?;
+        let token = get_token_with_client_and_body(jwt_body, &self.credentials)?;
         let expires_in = Duration::new(token.expires_in().into(), 0);
 
         assert!(
@@ -168,8 +158,8 @@ mod tests {
         (token, json.to_string())
     }
 
-    #[tokio::test]
-    async fn basic_token_fetch() {
+    #[test]
+    fn basic_token_fetch() {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = 0;
@@ -179,12 +169,12 @@ mod tests {
 
         let _mock = mock("POST", "/").with_status(200).with_body(json).create();
 
-        let token = fetcher.fetch_token().await.unwrap();
+        let token = fetcher.fetch_token().unwrap();
         assert_eq!(expected_token, token);
     }
 
-    #[tokio::test]
-    async fn basic_token_refresh() {
+    #[test]
+    fn basic_token_refresh() {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = 0;
@@ -200,19 +190,19 @@ mod tests {
             .create();
 
         // this should work
-        fetcher.fetch_token().await.unwrap();
+        fetcher.fetch_token().unwrap();
 
         // sleep for `expires_in`
         thread::sleep(StdDuration::from_secs(expires_in.into()));
 
         // this should refresh
-        fetcher.fetch_token().await.unwrap();
+        fetcher.fetch_token().unwrap();
 
         mock.assert();
     }
 
-    #[tokio::test]
-    async fn token_refresh_with_buffer() {
+    #[test]
+    fn token_refresh_with_buffer() {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = 4;
@@ -228,20 +218,20 @@ mod tests {
             .create();
 
         // this should work
-        fetcher.fetch_token().await.unwrap();
+        fetcher.fetch_token().unwrap();
 
         // sleep for `expires_in`
         let sleep_for = expires_in - (refresh_buffer as u32);
         thread::sleep(StdDuration::from_secs(sleep_for.into()));
 
         // this should refresh
-        fetcher.fetch_token().await.unwrap();
+        fetcher.fetch_token().unwrap();
 
         mock.assert();
     }
 
-    #[tokio::test]
-    async fn doesnt_token_refresh_unnecessarily() {
+    #[test]
+    fn doesnt_token_refresh_unnecessarily() {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = 0;
@@ -257,10 +247,10 @@ mod tests {
             .create();
 
         // this should work
-        fetcher.fetch_token().await.unwrap();
+        fetcher.fetch_token().unwrap();
 
         // fetch again, should not refresh
-        fetcher.fetch_token().await.unwrap();
+        fetcher.fetch_token().unwrap();
 
         mock.assert();
     }
