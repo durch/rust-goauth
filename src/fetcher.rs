@@ -38,9 +38,14 @@ impl TokenFetcher {
     pub fn new(
         jwt: Jwt<JwtClaims>,
         credentials: Credentials,
-        refresh_buffer: Duration,
+        refresh_buffer_seconds: i64,
     ) -> TokenFetcher {
-        TokenFetcher::with_client(Client::new(), jwt, credentials, refresh_buffer)
+        TokenFetcher::with_client(
+            Client::new(),
+            jwt,
+            credentials,
+            Duration::new(refresh_buffer_seconds, 0),
+        )
     }
 
     pub fn with_client(
@@ -129,7 +134,6 @@ mod tests {
     use smpl_jwt::Jwt;
     use std::thread;
     use std::time::Duration as StdDuration;
-    use time::Duration;
 
     fn get_mocks() -> (Jwt<JwtClaims>, Credentials) {
         let token_url = mockito::server_url();
@@ -168,7 +172,7 @@ mod tests {
     async fn basic_token_fetch() {
         let (jwt, credentials) = get_mocks();
 
-        let refresh_buffer = Duration::new(0, 0);
+        let refresh_buffer = 0;
         let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         let (expected_token, json) = token_json("token", "Bearer", 1);
@@ -183,7 +187,7 @@ mod tests {
     async fn basic_token_refresh() {
         let (jwt, credentials) = get_mocks();
 
-        let refresh_buffer = Duration::new(0, 0);
+        let refresh_buffer = 0;
         let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         let expires_in = 1;
@@ -212,7 +216,7 @@ mod tests {
         let (jwt, credentials) = get_mocks();
 
         let refresh_buffer = 4;
-        let fetcher = TokenFetcher::new(jwt, credentials, Duration::new(refresh_buffer, 0));
+        let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         let expires_in = 5;
         let (_expected_token, json) = token_json("token", "Bearer", expires_in);
@@ -240,7 +244,7 @@ mod tests {
     async fn doesnt_token_refresh_unnecessarily() {
         let (jwt, credentials) = get_mocks();
 
-        let refresh_buffer = Duration::new(0, 0);
+        let refresh_buffer = 0;
         let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         let expires_in = 1;
@@ -265,7 +269,7 @@ mod tests {
     #[test]
     fn is_send_and_sync() {
         let (jwt, credentials) = get_mocks();
-        let refresh_buffer = Duration::new(0, 0);
+        let refresh_buffer = 0;
         let fetcher = TokenFetcher::new(jwt, credentials, refresh_buffer);
 
         fn check(_: &(dyn Send + Sync)) {}

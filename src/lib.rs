@@ -14,7 +14,7 @@ use auth::{JwtClaims, Token};
 use credentials::Credentials;
 
 use reqwest::Client;
-use smpl_jwt::Jwt;
+pub use smpl_jwt::Jwt;
 use std::str::FromStr;
 
 use tokio::runtime::Runtime;
