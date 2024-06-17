@@ -1,6 +1,6 @@
 [package]
 name = "goauth"
-version = "0.14.0"
+version = "0.15.0"
 authors = ["Drazen Urch <github@drazenur.ch>"]
 description = "Crate for authenticating Server to Server Apps for Google Cloud Engine."
 repository = "https://github.com/durch/rust-goauth"
@@ -22,7 +22,7 @@ serde_json = "1"
 time = "0.3"
 log = "0.4"
 smpl_jwt = {version = "0.8.0", default-features = false}
-reqwest = { version = "0.11", features = ["blocking", "json"], default-features = false }
+reqwest = { version = "0.12", features = ["blocking", "json"], default-features = false }
 futures = "0.3"
 simpl = "0.1"
 tokio = { version = "1", features = ["rt-multi-thread"] }
