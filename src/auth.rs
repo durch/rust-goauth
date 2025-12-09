@@ -1,8 +1,8 @@
 use std::error::Error;
 use std::str::FromStr;
 
-use crate::scopes::Scope;
 use crate::GoErr;
+use crate::scopes::Scope;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct JwtClaims {

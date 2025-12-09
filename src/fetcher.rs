@@ -3,7 +3,7 @@
 
 use crate::auth::{JwtClaims, Token};
 use crate::credentials::Credentials;
-use crate::{get_token_with_client_and_body, Result};
+use crate::{Result, get_token_with_client_and_body};
 
 use arc_swap::ArcSwapOption;
 use smpl_jwt::Jwt;

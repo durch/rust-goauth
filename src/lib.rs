@@ -177,7 +177,10 @@ mod tests {
             Err(e) => panic!("{}", e),
         };
         let jwt = Jwt::new(claims, key, None);
-        assert_eq!(jwt.finalize().unwrap(), "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzb21lX2lzcyIsInNjb3BlIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfd3JpdGUiLCJhdWQiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjQvdG9rZW4iLCJleHAiOjE0ODIzMjA5ODUsImlhdCI6MTQ4MjMxNzM4NX0=.BldQozpzNYnLnYWBbqwAWY1j2hPDD3oVY9EOG0eRJN77sC4ZInEyGJT5eXLD39C726TdrEVCHmvhKBJFmaFL2BXNto69_v8lz-3oGnFL5FkUr4RRpukd_6tj7-RZzx15LIzdTqzKfAUlqWoZUdze8Fcd1NJ6w1g49CCghvN_eryvecALpjnHoBkKlIXnSm_udiSf26cYWvCikmW5g8nUqAduFsIYfR-4LMwyUfYH1hNC64SRsfLH9bL4-tyeaoUCv5MXTIhxrJbrhQy3TEOSc5didDrMoYNUu_qjJvxBQbq1Um1W1SpyvSd4eVJn18xZcOmCnoE73RDZcxT5hDpaRQ==");
+        assert_eq!(
+            jwt.finalize().unwrap(),
+            "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzb21lX2lzcyIsInNjb3BlIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfd3JpdGUiLCJhdWQiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjQvdG9rZW4iLCJleHAiOjE0ODIzMjA5ODUsImlhdCI6MTQ4MjMxNzM4NX0=.BldQozpzNYnLnYWBbqwAWY1j2hPDD3oVY9EOG0eRJN77sC4ZInEyGJT5eXLD39C726TdrEVCHmvhKBJFmaFL2BXNto69_v8lz-3oGnFL5FkUr4RRpukd_6tj7-RZzx15LIzdTqzKfAUlqWoZUdze8Fcd1NJ6w1g49CCghvN_eryvecALpjnHoBkKlIXnSm_udiSf26cYWvCikmW5g8nUqAduFsIYfR-4LMwyUfYH1hNC64SRsfLH9bL4-tyeaoUCv5MXTIhxrJbrhQy3TEOSc5didDrMoYNUu_qjJvxBQbq1Um1W1SpyvSd4eVJn18xZcOmCnoE73RDZcxT5hDpaRQ=="
+        );
     }
 
     #[test]
@@ -202,7 +205,10 @@ mod tests {
             Err(e) => panic!("{}", e),
         };
         let jwt = Jwt::new(claims, key, None);
-        assert_eq!(jwt.finalize().unwrap(), "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzb21lX2lzcyIsInNjb3BlIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfd3JpdGUgaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfb25seSIsImF1ZCI6Imh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92NC90b2tlbiIsImV4cCI6MTQ4MjMyMDk4NSwiaWF0IjoxNDgyMzE3Mzg1fQ==.BUWdKTcaN11Y8X6MV2KLBnB1JBeEq-7AvepT_1gjgG7g2out7zlxgQmK-RxhjZBDr0UeIThtB-afaTxOMEEhtrxXW4Moz8p8SIC01j6a8HS49xCfTCPsyqnrXRcOJwEaI6LNAht_yJ-H5Q6ql0bk1zdtZyVBVMbQ94ZWAeZqQcUWQqIGsr11W-6hueFX8fIDCTGHsmsz0VuyQEpwfSFdeO_7LrLjfmUMN8GGzldT0b8v7-SwK7xzEl4DrReRpDW0s0Aeq16WZzFd-dzaFox5xWWJq3xcNl_tR3eTk7DW8s95bMQDmNa4CGFmGha1PrUnVJRW9p9wqFO90t1G7xD97A==");
+        assert_eq!(
+            jwt.finalize().unwrap(),
+            "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzb21lX2lzcyIsInNjb3BlIjoiaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfd3JpdGUgaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9kZXZzdG9yYWdlLnJlYWRfb25seSIsImF1ZCI6Imh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92NC90b2tlbiIsImV4cCI6MTQ4MjMyMDk4NSwiaWF0IjoxNDgyMzE3Mzg1fQ==.BUWdKTcaN11Y8X6MV2KLBnB1JBeEq-7AvepT_1gjgG7g2out7zlxgQmK-RxhjZBDr0UeIThtB-afaTxOMEEhtrxXW4Moz8p8SIC01j6a8HS49xCfTCPsyqnrXRcOJwEaI6LNAht_yJ-H5Q6ql0bk1zdtZyVBVMbQ94ZWAeZqQcUWQqIGsr11W-6hueFX8fIDCTGHsmsz0VuyQEpwfSFdeO_7LrLjfmUMN8GGzldT0b8v7-SwK7xzEl4DrReRpDW0s0Aeq16WZzFd-dzaFox5xWWJq3xcNl_tR3eTk7DW8s95bMQDmNa4CGFmGha1PrUnVJRW9p9wqFO90t1G7xD97A=="
+        );
     }
 
     #[test]
